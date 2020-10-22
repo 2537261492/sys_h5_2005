@@ -1,0 +1,32 @@
+body{
+    margin: 0;
+}
+h1,h2,h3,h4,h5,h6{
+    margin:0;
+    padding: 0;
+}
+ul{
+    list-style: none;
+    margin:0;
+    padding: 0;
+}
+
+
+html,body,#app,.home-page,.login,.el-container{
+    height: 100%;
+}
+html,body,#app,.login,.bg_video{
+    width: 100%;
+}
+/* login页面 */
+.login-page{
+    color: #fff;
+}
+.el-form-item__label{
+    color: #fff;
+}
+/* 用户名密码输入框 */
+.el-input__inner {
+    background: none;
+    color: #fff;
+  }
