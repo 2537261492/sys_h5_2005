@@ -3,54 +3,16 @@
     <!-- 侧边栏 -->
     <!--写了 width="200" 才会动态的收缩自如，不加px才行 -->
     <el-aside width="200">
-      <!-- <subMenu></subMenu> -->
-      <!-- default-active用于展开一个默认的菜单，collapse用于控制是否是展开收起的 -->
+      <h1 class="logo"></h1>
+      <!-- default-active用于展开一个默认的菜单，collapse用于控制是否是展开收起的 
+      :default-active 动态的处理导航高亮显示-->
       <el-menu
-        default-active="1-4-1"
+        :default-active="$route.path"
         class="el-menu-vertical-demo"
         :router="true"
         :collapse="isCollapse"
       >
-        <el-menu-item index="Welcome">
-          <i class="iconfont icon-shouye"></i>
-          <span slot="title">首页管理</span>
-        </el-menu-item>
-
-        <!--   el-submenu 是具有子菜单的 -->
-        <el-submenu index="2">
-          <template slot="title">
-            <i class="iconfont icon-xueyuan"></i>
-            <span slot="title">图书管理</span>
-          </template>
-          <el-menu-item-group>
-            <!-- <span slot="title">分组一</span> -->
-            <el-menu-item index="/StudentManager/studentProduct">
-              学生项目管理
-            </el-menu-item>
-            <el-menu-item index="/StudentManager/studentProfile">
-              学术资料
-            </el-menu-item>
-            <el-menu-item index="/StudentManager/studentDormitory">
-              学生宿舍
-            </el-menu-item>
-          </el-menu-item-group>
-        </el-submenu>
-
-        <!-- el-menu-item 是常规菜单 -->
-        <el-menu-item index="Attendance">
-          <i class="iconfont icon-kaoqin"></i>
-          <span slot="title">考勤管理</span>
-        </el-menu-item>
-
-        <el-menu-item index="Statistics">
-          <i class="iconfont icon-shuju1"></i>
-          <span slot="title">数据统计</span>
-        </el-menu-item>
-
-        <el-menu-item index="Mine">
-          <i class="iconfont icon-wode"></i>
-          <span slot="title">我的中心</span>
-        </el-menu-item>
+        <qf-sub-menu :sideMenu="menuList"></qf-sub-menu>
       </el-menu>
     </el-aside>
     <el-container>
@@ -87,21 +49,29 @@
       </el-header>
       <!-- 主体区域 -->
       <el-main>
+        <el-breadcrumb separator-class="el-icon-arrow-right">
+          <el-breadcrumb-item :to="{ path: '/Welcome' }"
+            >首页</el-breadcrumb-item
+          >
+          <el-breadcrumb-item
+            :to="{ path: crumbs.path }"
+            v-for="crumbs in crumbs"
+            :key="crumbs.id"
+            >{{ crumbs.meta.name }}</el-breadcrumb-item
+          >
+        </el-breadcrumb>
         <router-view></router-view>
       </el-main>
     </el-container>
   </el-container>
 </template>
 <script>
-import { getLoginLog } from "../../api";
+// import { getLoginLog } from "../../api";
 import { mapState } from "vuex";
-// import subMenu from "../../components/subMenu";
 export default {
-  components: {
-    // subMenu
-  },
+  components: {},
   computed: {
-    ...mapState(["userInfo"])
+    ...mapState(["userInfo", "menuList", "crumbs"])
   },
   data() {
     return {
@@ -122,12 +92,14 @@ export default {
       localStorage.removeItem("qf2005-token");
       localStorage.removeItem("qf2005-userInfo");
       this.$router.push("/login");
+      //刷新页面  用于防止页面缓存
+      window.location.reload();
     }
   },
   mounted() {
-    getLoginLog().then(res => {
-      console.log(res);
-    });
+    // getLoginLog().then(res => {
+    //   console.log(res);
+    // });
   }
 };
 </script>
@@ -146,9 +118,14 @@ export default {
 .el-submenu__title i {
   color: #4e5bf8;
 }
-
+.el-menu-item.is-active {
+  color: rgb(255, 47, 99);
+}
 .icon-shouqi {
-  font-size: 28px;
+  font-size: 33px !important;
+}
+.bg-purple-light {
+  font-size: 25px;
 }
 .el-header {
   /* background-color: #b3c0d1; */
@@ -168,7 +145,7 @@ export default {
   min-height: 400px;
 }
 .el-aside {
-  background-color: #d3dce6;
+  background-color: #6e50e7;
   color: #333;
   text-align: center;
   line-height: 200px;
@@ -204,9 +181,6 @@ body > .el-container {
   text-align: center;
   line-height: 60px;
 }
-.grid-content {
-  /* cursor: text; */
-}
 .bg-purple-right {
   padding-left: 10px;
   text-align: left;
@@ -217,11 +191,23 @@ body > .el-container {
 }
 .text {
   cursor: text;
+  padding: 0 6px;
 }
 .el-avatar {
   vertical-align: middle;
 }
 .quit {
   color: pink;
+}
+.nickname {
+  padding-right: 8px;
+}
+.logo {
+  height: 60px;
+  background: linear-gradient(135deg, #4c67ff, #5635df);
+  background-image: url("../../assets/styles/imgs/logo.be8bbddf.png");
+  background-size: 80%;
+  background-repeat: no-repeat;
+  background-position: 50%;
 }
 </style>

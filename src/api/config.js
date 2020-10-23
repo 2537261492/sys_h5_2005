@@ -1,12 +1,16 @@
 import axios from "axios";
 import router from "../router";
 import ElementUI from "element-ui";
-
+//引入nprogress进度条
+import NProgress from "nprogress"
 //基础地址设置
 axios.defaults.baseURL =
   process.env.NODE_ENV === "development" ? "/api" : "http://www.chst.vip";
 
 axios.defaults.withCredentials = true; //允许请求携带认证
+
+//中断请求属性
+export let CancelToken = axios.CancelToken;
 
 //创建请求拦截器，可以给每个请求都携带上想要传递的内容
 axios.interceptors.request.use(config => {
@@ -34,8 +38,11 @@ axios.interceptors.response.use(config => {
     ElementUI.Message.error("登录信息失效，请重新登录");
     // console.log(ElementUI);
     // alert("登录信息失效，请重新登录")
+    localStorage.removeItem("qf2005-token")//清除token不然会一直显示登陆失效进入死循环
     router.push("/login");
     // console.log(router);
+    //刷新页面  用于防止页面缓存
+    window.location.reload();
   }
   return config;
 });
