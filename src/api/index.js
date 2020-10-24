@@ -26,5 +26,10 @@ export const getLoginLog = (_this) => axios.get("/getloginlog", {
 //获取用户菜单
 export const getMenuList = () => axios.get("/permission/getMenuList")
 
-
+//获取验证码
+export const getCaptcha = () => axios.get("/users/getCaptcha")
+//刷新验证码
+export const refreshCaptcha = () => axios.get("/users/refreshCaptcha")
+//校验验证码
+export const verifyCaptcha = (captcha) => axios.get(`/users/verifyCaptcha?captcha=${captcha}`)
 

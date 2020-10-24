@@ -16,7 +16,6 @@
 
       <el-form
         :model="loginForm"
-        status-icon
         :rules="rules"
         ref="loginForm"
         label-width="100px"
@@ -38,6 +37,17 @@
           >
           </el-input>
         </el-form-item>
+        <!-- 验证码 -->
+        <el-form-item label="验证码" prop="captcha">
+          <el-input
+            type="text"
+            class="captcha"
+            v-model="loginForm.captcha"
+            autocomplete="off"
+          >
+          </el-input>
+          <span class="captcha-svg" v-html="captchaSvg">123123</span>
+        </el-form-item>
 
         <el-form-item>
           <el-button type="primary" @click="submitForm('loginForm')">
@@ -56,7 +66,12 @@
 4.展示token校验正确的数据
 5.校验不通过，跳转到登录页 */
 
-import { login } from "../../api/index";
+import {
+  login,
+  getCaptcha,
+  refreshCaptcha,
+  verifyCaptcha
+} from "../../api/index";
 import { mapMutations } from "vuex";
 export default {
   data() {
@@ -79,6 +94,7 @@ export default {
       // console.log(rule);
       // console.log(value);
     };
+    //校验用户密码
     var validatePassword = (rule, value, callback) => {
       if (!value) {
         callback("请输入密码");
@@ -86,26 +102,55 @@ export default {
         callback();
       }
     };
+    //校验验证码
+    var validateCaptcha = (rule, value, callback) => {
+      if (value === "" || value.length !== 5) {
+        callback(new Error("请输入验证码"));
+      } else {
+        callback();
+      }
+    };
     return {
+      captchaSvg: "", //从服务器获取下来的验证码Svg结构
       loginForm: {
         username: "",
-        password: ""
+        password: "",
+        captcha: ""
       },
       rules: {
         //validator:传入校验的函数，trigger：触发它的条件：失去焦点
         username: [{ validator: validateUsername, trigger: "blur" }],
-        password: [{ validator: validatePassword, trigger: "blur" }]
+        password: [{ validator: validatePassword, trigger: "blur" }],
+        captcha: [{ validator: validateCaptcha, trigger: "blur" }]
       }
     };
   },
+  mounted() {
+    this.set_captcha();
+  },
   methods: {
+    //设置验证码
+    set_captcha() {
+      getCaptcha().then(res => {
+        console.log(res);
+        this.captchaSvg = res.data.img;
+      });
+    },
     ...mapMutations(["SET_USERINFO"]),
     submitForm(formName) {
       // console.log(this.$refs[formName]);
       //获取注册在refs对象上面的组件的引用
-      this.$refs[formName].validate(valid => {
+      this.$refs[formName].validate(async valid => {
         //代表本地校验通过之后
         if (valid) {
+          //先验证验证码是否正确 如果正确再发送登录请求
+          let verifyRes = await verifyCaptcha(this.loginForm.captcha);
+          console.log(verifyRes);
+          if (!verifyRes.data.state) {
+            //验证码不正确
+            this.$message.error("验证码输入错误，请重新输入");
+            return;
+          }
           //打开登入加载动画
           const loading = this.$loading({
             lock: true,
@@ -213,4 +258,5 @@ export default {
   width: 249px;
   background: linear-gradient(90deg, #1596fb, #002dff);
 }
+/* 验证码 */
 </style>

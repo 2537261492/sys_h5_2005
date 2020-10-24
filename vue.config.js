@@ -1,4 +1,3 @@
-console.log(99999999999);
 module.exports = {
   lintOnSave: false,
   //配置代理

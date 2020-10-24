@@ -27,8 +27,22 @@ html,body,#app,.login,.bg_video{
 }
 /* 用户名密码输入框 */
 .el-input__inner {
-    background: none;
+    background: none; 
     color: #fff;
+  }
+/* 验证码 */
+.captcha {
+    width: 115px !important;
+    vertical-align: middle;
+    float: left;
+  }
+  .captcha-svg{
+    height: 44px;
+    float: left;
+    width: 136px!important;
+    overflow: hidden;
+    background-color:  rgba(255, 255, 255, .6);
+    border-radius: 8px;
   }
 
 .el-menu--collapse .el-submenu__title span {
