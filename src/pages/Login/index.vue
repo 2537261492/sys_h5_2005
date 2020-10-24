@@ -31,7 +31,6 @@
         <el-form-item label="密码" prop="password">
           <el-input
             type="password"
-            @keydown.native.enter="submitForm('loginForm')"
             v-model="loginForm.password"
             autocomplete="off"
           >
@@ -44,9 +43,11 @@
             class="captcha"
             v-model="loginForm.captcha"
             autocomplete="off"
+            @keydown.native.enter="submitForm('loginForm')"
           >
           </el-input>
-          <span class="captcha-svg" v-html="captchaSvg">123123</span>
+          <span class="captcha-svg" v-html="captchaSvg" @click="refreshCaptcha">
+          </span>
         </el-form-item>
 
         <el-form-item>
@@ -66,12 +67,7 @@
 4.展示token校验正确的数据
 5.校验不通过，跳转到登录页 */
 
-import {
-  login,
-  getCaptcha,
-  refreshCaptcha,
-  verifyCaptcha
-} from "../../api/index";
+import { login, getCaptcha, verifyCaptcha } from "../../api/index";
 import { mapMutations } from "vuex";
 export default {
   data() {
@@ -129,6 +125,10 @@ export default {
     this.set_captcha();
   },
   methods: {
+    //刷新验证码
+    refreshCaptcha() {
+      this.set_captcha();
+    },
     //设置验证码
     set_captcha() {
       getCaptcha().then(res => {
